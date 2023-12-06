@@ -1,0 +1,132 @@
+Table Customer {
+  customer_ID int [pk]
+  customer_Name varchar
+  customer_Address varchar
+  customer_Email varchar
+  customer_RegDate date [default: `CURRENT_TIMESTAMP`]
+  customer_LoyaltyPoint int
+}
+
+Table CustomerPhone {
+  customerPhone_ID int [pk]
+  customer_Phone varchar
+  customer_ID int [ref: > Customer.customer_ID]
+}
+
+Table CafeManager {
+  manager_ID int [pk]
+  manager_Name varchar
+  manager_Address varchar
+  manager_Email varchar
+  manager_Salary decimal
+  manager_JoinDate date
+}
+
+Table ManagerPhone {
+  managerPhone_ID int [pk]
+  manager_Phone varchar
+  manager_ID int [ref: > CafeManager.manager_ID]
+}
+
+Table CashierManager {
+  cashier_ID int [pk]
+  cashier_Name varchar
+  cashier_Address varchar
+  cashier_Email varchar
+  cashier_Salary decimal
+  cashier_JoinDate date
+  manager_ID int [ref: > CafeManager.manager_ID]
+}
+
+Table CashierCustomer {
+  cashierCustomer_ID int [pk]
+  cashier_ID int [ref: > CashierManager.cashier_ID]
+  customer_ID int [ref: > Customer.customer_ID]
+}
+
+Table CashierManagerRelation {
+  cashierManagerRelation_ID int [pk]
+  cashier_ID int [ref: > CashierManager.cashier_ID]
+  manager_ID int [ref: > CafeManager.manager_ID]
+}
+
+Table InventoryManager {
+  inventoryManager_ID int [pk]
+  inventoryManager_Name varchar
+  inventoryManager_Address varchar
+  inventoryManager_Email varchar
+  inventoryManager_Salary decimal
+  manager_ID int [ref: > CafeManager.manager_ID]
+}
+
+Table InventoryManagerPhone {
+  inventoryManagerPhone_ID int [pk]
+  inventoryManager_Phone varchar
+  inventoryManager_ID int [ref: > InventoryManager.inventoryManager_ID]
+}
+
+Table Menu {
+  menu_ID int [pk]
+  menu_Name varchar
+  menu_Price decimal
+  menu_Availability boolean
+  menu_Description varchar
+  menu_NutriInfo varchar
+  menu_Category varchar
+  inventoryManager_ID int [ref: > InventoryManager.inventoryManager_ID]
+}
+
+Table MenuInventory {
+  menuInventory_ID int [pk]
+  menu_ID int [ref: > Menu.menu_ID]
+  inventoryManager_ID int [ref: > InventoryManager.inventoryManager_ID]
+}
+
+Table Orders {
+  order_ID int [pk]
+  order_Date date [default: `CURRENT_TIMESTAMP`]
+  order_PaymentMethod varchar
+  order_Status varchar
+  order_Discount decimal
+  order_CustomerID int [ref: > Customer.customer_ID]
+  order_ManagerID int [ref: > CafeManager.manager_ID]
+}
+
+Table OrderDetails {
+  orderDetails_ID int [pk]
+  order_ID int [ref: > Orders.order_ID]
+  menu_ID int [ref: > Menu.menu_ID]
+  orderDetails_Quantity int
+}
+
+Table Vendor {
+  vendor_ID int [pk]
+  vendor_Name varchar
+  vendor_Address varchar
+  vendor_Email varchar
+  manager_ID int [ref: > CafeManager.manager_ID]
+}
+
+Table VendorPhone {
+  vendorPhone_ID int [pk]
+  vendor_Phone varchar
+  vendor_ID int [ref: > Vendor.vendor_ID]
+}
+
+// Ref: Customer.customer_ID < CustomerPhone.customer_ID
+// Ref: CafeManager.manager_ID < ManagerPhone.manager_ID
+// Ref: CafeManager.manager_ID < CashierManager.manager_ID
+// Ref: CashierManager.cashier_ID < CashierCustomer.cashier_ID
+// Ref: Customer.customer_ID < CashierCustomer.customer_ID
+// Ref: CashierManager.cashier_ID < CashierManagerRelation.cashier_ID
+// Ref: CafeManager.manager_ID < CashierManagerRelation.manager_ID
+// Ref: CafeManager.manager_ID < InventoryManager.manager_ID
+// Ref: InventoryManager.inventoryManager_ID < InventoryManagerPhone.inventoryManager_ID
+// Ref: InventoryManager.inventoryManager_ID < Menu.inventoryManager_ID
+// Ref: InventoryManager.inventoryManager_ID < MenuInventory.inventoryManager_ID
+// Ref: Customer.customer_ID < Orders.order_CustomerID
+// Ref: CafeManager.manager_ID < Orders.order_ManagerID
+// Ref: Orders.order_ID < OrderDetails.order_ID
+// Ref: Menu.menu_ID < OrderDetails.menu_ID
+// Ref: CafeManager.manager_ID < Vendor.manager_ID
+// Ref: Vendor.vendor_ID < VendorPhone.vendor_ID
